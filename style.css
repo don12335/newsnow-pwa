@@ -1,0 +1,68 @@
+:root {
+  --bg: #ffffff;
+  --text: #111;
+  --card: #f9f9f9;
+}
+body.dark {
+  --bg: #121212;
+  --text: #eee;
+  --card: #1e1e1e;
+}
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.3s, color 0.3s;
+}
+header {
+  padding: 1rem;
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+main {
+  padding: 1rem;
+}
+#searchForm {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+input, select, button {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+#newsList {
+  display: grid;
+  gap: 1rem;
+}
+.card {
+  background: var(--card);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.card h2 {
+  margin: 0 0 0.5rem 0;
+}
+.card p {
+  margin: 0.25rem 0;
+}
+footer {
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: gray;
+}
