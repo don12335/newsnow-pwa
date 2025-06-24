@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📰 NewsNow</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="icons/icon-192.png" />
+</head>
+<body>
+  <header>
+    <h1>📰 NewsNow</h1>
+    <div class="controls">
+      <select id="category">
+        <option value="technology">科技</option>
+        <option value="sports">體育</option>
+        <option value="entertainment">娛樂</option>
+        <option value="business">財經</option>
+        <option value="world">世界</option>
+      </select>
+      <select id="language">
+        <option value="zh-TW">繁體中文</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="ko">한국어</option>
+      </select>
+      <button id="toggleTheme">🌞/🌙</button>
+    </div>
+  </header>
+
+  <main>
+    <form id="searchForm">
+      <input type="text" id="searchInput" placeholder="輸入關鍵字..." />
+      <button type="submit">搜尋</button>
+    </form>
+    <div id="newsList">載入中...</div>
+  </main>
+
+  <footer>
+    <p>NewsNow © 2025</p>
+  </footer>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(() => {
+        console.log('✅ Service Worker 註冊成功');
+      });
+    }
+  </script>
+</body>
+</html>
