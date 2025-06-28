@@ -1,4 +1,76 @@
-app.get('/news', (req, res) => {
-  fetch('https://newsapi.org/...')
-    .then(r => r.json()).then(data => res.json(data));
+const API_KEY = "f2a06ac46d2b468098107a676edb9b73";
+const BASE_URL = "https://newsapi.org/v2";
+const PROXY = "https://cors.codetabs.com/v1/proxy?quest=";
+
+const newsList = document.getElementById("newsList");
+const searchForm = document.getElementById("searchForm");
+const searchInput = document.getElementById("searchInput");
+const categorySelect = document.getElementById("category");
+const languageSelect = document.getElementById("language");
+const toggleTheme = document.getElementById("toggleTheme");
+
+window.addEventListener("load", () => {
+  if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+  }
+  loadNews();
 });
+
+toggleTheme.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  const theme = document.body.classList.contains("dark") ? "dark" : "light";
+  localStorage.setItem("theme", theme);
+});
+
+searchForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const keyword = searchInput.value.trim();
+  if (keyword) loadNews(keyword);
+});
+
+categorySelect.addEventListener("change", () => loadNews());
+languageSelect.addEventListener("change", () => loadNews());
+
+function getNewsURL(keyword = "") {
+  const category = categorySelect.value;
+  const lang = languageSelect.value;
+
+  if (keyword) {
+    return `${BASE_URL}/everything?q=${encodeURIComponent(keyword)}&language=${lang}&apiKey=${API_KEY}`;
+  } else {
+    const countryMap = {
+      "zh-TW": "tw",
+      "en": "us",
+      "ja": "jp",
+      "ko": "kr"
+    };
+    const country = countryMap[lang] || "us";
+    return `${BASE_URL}/top-headlines?country=${country}&category=${category}&apiKey=${API_KEY}`;
+  }
+}
+
+function loadNews(keyword = "") {
+  newsList.innerHTML = "<p>載入中...</p>";
+  const url = getNewsURL(keyword);
+  const proxyUrl = PROXY + encodeURIComponent(url);
+
+  fetch(proxyUrl)
+    .then((res) => res.json())
+    .then((data) => {
+      if (!data.articles || data.articles.length === 0) {
+        newsList.innerHTML = "<p>找不到新聞。</p>";
+        return;
+      }
+      newsList.innerHTML = data.articles.map(article => `
+        <div class="card">
+          <h2><a href="${article.url}" target="_blank">${article.title}</a></h2>
+          <p>${article.source.name || "來源不明"}｜${new Date(article.publishedAt).toLocaleString()}</p>
+          <p>${article.description || ""}</p>
+        </div>
+      `).join("");
+    })
+    .catch((err) => {
+      console.error("載入錯誤", err);
+      newsList.innerHTML = "<p>❌ 載入失敗。</p>";
+    });
+}
