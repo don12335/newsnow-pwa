@@ -1,0 +1,4 @@
+app.get('/news', (req, res) => {
+  fetch('https://newsapi.org/...')
+    .then(r => r.json()).then(data => res.json(data));
+});
