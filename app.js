@@ -1,5 +1,5 @@
-const API_KEY = "7bb77a292e5e076bc189b7e7a276810d";
-const API_URL = "https://gnews.io/api/v4/top-headlines";
+const API_KEY = "f2a06ac46d2b468098107a676edb9b73";
+const BASE_URL = "https://newsapi.org/v2";
 
 const newsList = document.getElementById("newsList");
 const searchForm = document.getElementById("searchForm");
@@ -30,18 +30,31 @@ searchForm.addEventListener("submit", (e) => {
 categorySelect.addEventListener("change", () => loadNews());
 languageSelect.addEventListener("change", () => loadNews());
 
-function loadNews(keyword = "") {
-  newsList.innerHTML = "<p>載入中...</p>";
+function getNewsURL(keyword = "") {
   const category = categorySelect.value;
   const lang = languageSelect.value;
-  const params = new URLSearchParams({
-    token: API_KEY,
-    lang,
-    topic: category,
-  });
-  if (keyword) params.append("q", keyword);
 
-  fetch(`${API_URL}?${params}`)
+  if (keyword) {
+    // 使用 everything 模式搜尋
+    return `${BASE_URL}/everything?q=${encodeURIComponent(keyword)}&language=${lang}&apiKey=${API_KEY}`;
+  } else {
+    // 使用 top-headlines 模式
+    const countryMap = {
+      "zh-TW": "tw",
+      "en": "us",
+      "ja": "jp",
+      "ko": "kr"
+    };
+    const country = countryMap[lang] || "us";
+    return `${BASE_URL}/top-headlines?country=${country}&category=${category}&apiKey=${API_KEY}`;
+  }
+}
+
+function loadNews(keyword = "") {
+  newsList.innerHTML = "<p>載入中...</p>";
+  const url = getNewsURL(keyword);
+
+  fetch(url)
     .then((res) => res.json())
     .then((data) => {
       if (!data.articles || data.articles.length === 0) {
@@ -51,12 +64,13 @@ function loadNews(keyword = "") {
       newsList.innerHTML = data.articles.map(article => `
         <div class="card">
           <h2><a href="${article.url}" target="_blank">${article.title}</a></h2>
-          <p>${article.source.name}｜${new Date(article.publishedAt).toLocaleString()}</p>
+          <p>${article.source.name || "來源不明"}｜${new Date(article.publishedAt).toLocaleString()}</p>
           <p>${article.description || ""}</p>
         </div>
       `).join("");
     })
-    .catch(() => {
+    .catch((err) => {
+      console.error("載入錯誤", err);
       newsList.innerHTML = "<p>❌ 載入失敗。</p>";
     });
 }
